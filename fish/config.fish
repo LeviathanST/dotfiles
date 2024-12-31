@@ -1,7 +1,15 @@
+
+# ENV
 fish_add_path -aP ~/.local/bin
 
 if status is-interactive
     # Commands to run in interactive sessions can go here
+
+    # Import
+    source ~/.config/fish/fzf-key-binding.fish
+end
+
+function fish_greeting 
 end
 
 # =============================================================================
@@ -109,6 +117,3 @@ alias zi=__zoxide_zi
 set --export BUN_INSTALL "$HOME/.bun"
 set --export PATH $BUN_INSTALL/bin $PATH
 
-# bun
-set --export BUN_INSTALL "$HOME/.bun"
-set --export PATH $BUN_INSTALL/bin $PATH
