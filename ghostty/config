@@ -1,0 +1,7 @@
+theme = tokyonight
+
+confirm-close-surface=false
+gtk-tabs-location=bottom
+
+keybind=shift+ctrl+l=next_tab
+keybind=shift+ctrl+h=next_tab
