@@ -1,7 +1,13 @@
 theme = tokyonight
 
+font-family=Maple Mono NF CN
+
+cursor-style=block
 confirm-close-surface=false
 gtk-tabs-location=bottom
+gtk-wide-tabs=false
+
+shell-integration-features=no-cursor
 
 keybind=shift+ctrl+l=next_tab
-keybind=shift+ctrl+h=next_tab
+keybind=shift+ctrl+h=previous_tab
