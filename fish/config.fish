@@ -4,9 +4,10 @@ fish_add_path -aP ~/.local/bin
 
 if status is-interactive
     # Commands to run in interactive sessions can go here
-
     # Import
-    source ~/.config/fish/fzf-key-binding.fish
+    source $HOME/.config/fish/alias.fish
+    source $HOME/.config/fish/fzf-key-binding.fish
+    starship init fish | source
 end
 
 function fish_greeting 
@@ -117,3 +118,8 @@ alias zi=__zoxide_zi
 set --export BUN_INSTALL "$HOME/.bun"
 set --export PATH $BUN_INSTALL/bin $PATH
 
+
+# ZVM
+set -gx ZVM_INSTALL "$HOME/.zvm/self"
+set -gx PATH $PATH "$HOME/.zvm/bin"
+set -gx PATH $PATH "$ZVM_INSTALL/"
