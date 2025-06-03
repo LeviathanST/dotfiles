@@ -120,6 +120,6 @@ set --export PATH $BUN_INSTALL/bin $PATH
 
 
 # ZVM
-set -gx ZVM_INSTALL "$HOME/.zvm/self"
-set -gx PATH $PATH "$HOME/.zvm/bin"
+set -gx ZVM_INSTALL "$HOME/.local/share/zvm/self"
+set -gx PATH $PATH "$HOME/.local/share/zvm/bin"
 set -gx PATH $PATH "$ZVM_INSTALL/"
