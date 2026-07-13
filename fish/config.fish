@@ -15,111 +15,44 @@ end
 
 # =============================================================================
 #
-# Utility functions for zoxide.
+# zoxide — smarter cd tool
 #
-
-# pwd based on the value of _ZO_RESOLVE_SYMLINKS.
-function __zoxide_pwd
-    builtin pwd -L
-end
-
-# A copy of fish's internal cd function. This makes it possible to use
-# `alias cd=z` without causing an infinite loop.
-if ! builtin functions --query __zoxide_cd_internal
-    string replace --regex -- '^function cd\s' 'function __zoxide_cd_internal ' <$__fish_data_dir/functions/cd.fish | source
-end
-
-# cd + custom logic based on the value of _ZO_ECHO.
-function __zoxide_cd
-    if set -q __zoxide_loop
-        builtin echo "zoxide: infinite loop detected"
-        builtin echo "Avoid aliasing `cd` to `z` directly, use `zoxide init --cmd=cd fish` instead"
-        return 1
-    end
-    __zoxide_loop=1 __zoxide_cd_internal $argv
-end
-
-# =============================================================================
-#
-# Hook configuration for zoxide.
-#
-
-# Initialize hook to add new entries to the database.
-function __zoxide_hook --on-variable PWD
-    test -z "$fish_private_mode"
-    and command zoxide add -- (__zoxide_pwd)
-end
-
-# =============================================================================
-#
-# When using zoxide with --no-cmd, alias these internal functions as desired.
-#
-
-# Jump to a directory using only keywords.
-function __zoxide_z
-    set -l argc (builtin count $argv)
-    if test $argc -eq 0
-        __zoxide_cd $HOME
-    else if test "$argv" = -
-        __zoxide_cd -
-    else if test $argc -eq 1 -a -d $argv[1]
-        __zoxide_cd $argv[1]
-    else if test $argc -eq 2 -a $argv[1] = --
-        __zoxide_cd -- $argv[2]
-    else
-        set -l result (command zoxide query --exclude (__zoxide_pwd) -- $argv)
-        and __zoxide_cd $result
-    end
-end
-
-# Completions.
-function __zoxide_z_complete
-    set -l tokens (builtin commandline --current-process --tokenize)
-    set -l curr_tokens (builtin commandline --cut-at-cursor --current-process --tokenize)
-
-    if test (builtin count $tokens) -le 2 -a (builtin count $curr_tokens) -eq 1
-        # If there are < 2 arguments, use `cd` completions.
-        complete --do-complete "'' "(builtin commandline --cut-at-cursor --current-token) | string match --regex -- '.*/$'
-    else if test (builtin count $tokens) -eq (builtin count $curr_tokens)
-        # If the last argument is empty, use interactive selection.
-        set -l query $tokens[2..-1]
-        set -l result (command zoxide query --exclude (__zoxide_pwd) --interactive -- $query)
-        and __zoxide_cd $result
-        and builtin commandline --function cancel-commandline repaint
-    end
-end
-complete --command __zoxide_z --no-files --arguments '(__zoxide_z_complete)'
-
-# Jump to a directory using interactive search.
-function __zoxide_zi
-    set -l result (command zoxide query --interactive -- $argv)
-    and __zoxide_cd $result
-end
-
-# =============================================================================
-#
-# Commands for zoxide. Disable these using --no-cmd.
-#
-
-builtin abbr --erase z &>/dev/null
-alias z=__zoxide_z
-
-builtin abbr --erase zi &>/dev/null
-alias zi=__zoxide_zi
-
-# =============================================================================
-#
-# To initialize zoxide, add this to your configuration (usually
-# ~/.config/fish/config.fish):
-#
-#   zoxide init fish | source
+zoxide init fish | source
 
 # bun
 set --export BUN_INSTALL "$HOME/.bun"
-set --export PATH $BUN_INSTALL/bin $PATH
+set --export PATH $BUN_INSTALL/bin $PATH 
 
 
 # ZVM
 set -gx ZVM_INSTALL "$HOME/.local/share/zvm/self"
 set -gx PATH $PATH "$HOME/.local/share/zvm/bin"
 set -gx PATH $PATH "$ZVM_INSTALL/"
+
+# Baro
+set -x PATH $PATH "$HOME/workspaces/zig/baro/zig-out/bin"
+set -x PATH $PATH "$HOME/.local/share/baro/bin"
+
+set -x PATH $PATH "$HOME/workspaces/zig/poop/zig-out/bin"
+set -x PATH $PATH "$HOME/workspaces/zig/zine/zig-out/bin"
+set -x PATH $PATH "$HOME/workspaces/zig/zlint/zig-out/bin"
+set -x PATH $PATH "$HOME/workspaces/tools/ccsm/target/release"
+set -x PATH $PATH "/home/leviathanst/workspaces/tools/aseprite/aseprite-release/bin"
+
+set -gx DISABLE_AUTOUPDATER 1
+set -gx ANTHROPIC_BASE_URL https://api.deepseek.com/anthropic
+set -gx ANTHROPIC_AUTH_TOKEN sk-4372e6c141384f58adbc491cc7c44c07
+set -gx ANTHROPIC_MODEL deepseek-v4-flash
+set -gx ANTHROPIC_DEFAULT_OPUS_MODEL deepseek-v4-pro[1m]
+set -gx ANTHROPIC_DEFAULT_SONNET_MODEL deepseek-v4-flash
+set -gx ANTHROPIC_DEFAULT_HAIKU_MODEL deepseek-v4-flash
+set -gx CLAUDE_CODE_SUBAGENT_MODEL deepseek-v4-flash
+set -gx CLAUDE_CODE_EFFORT_LEVEL max
+
+fish_add_path -aP ~/.cargo/bin
+fish_add_path -aP "$HOME/workspaces/zig/nullclaw/zig-out/bin"
+
+# Amp CLI
+export PATH="/home/leviathanst/.amp/bin:$PATH"
+set -x ENABLE_LSP_TOOL true
+alias claude-godot="ENABLE_LSP_TOOL=true claude"
